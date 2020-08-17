@@ -26,8 +26,20 @@ class TasksController < ApplicationController
   def edit
     @task = Task.find(params[:id])
     
+    # if @task.update(task_params)
+    #   flash[:success] = "タスクが正常に更新されました"
+    #   redirect_to @task
+    # else
+    #   flash.now[:danger] = "タスクが更新されませんでした"
+    #   render :edit
+    # end
+  end
+    
+  def update
+    @task = Task.find(params[:id])
+    p '--test--'
     if @task.update(task_params)
-      flash[:success] = "タスクが正常に更新されました"
+      flash[:success] = "メッセージは正常に更新されました"
       redirect_to @task
     else
       flash.now[:danger] = "タスクが更新されませんでした"
@@ -35,29 +47,18 @@ class TasksController < ApplicationController
     end
   end
     
-  def update
-    @task = Task.find(params[:id])
-    if @task.update(task_params)
-      flash[:success] = "メッセージは正常に更新されました"
-      redirect_to @task
-    else
-      flash.now[:danger] = "タスクが更新されませんでした"
-      render :edit
-    end  
-  end
-    
   def destroy
-    @task = @Task.find(params[:id])
+    @task = Task.find(params[:id])
     @task.destroy
     
     flash[:success] = "タスクが削除されました"
     redirect_to tasks_url
   end
   
-private #以下、このクラス内でのみ働くメソッド
+private
 
   def task_params
-    params.require(:task).permit(:content) 
+    params.require(:task).permit(:content)
   end
   
 end
