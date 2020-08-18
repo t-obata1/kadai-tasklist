@@ -2,7 +2,7 @@ class TasksController < ApplicationController
   before_action :set_task,  only: [:show,:edit,:update,:destroy]
   
   def index
-    @tasks = Task.all #インスタンス変数 = モデル名.allを代入
+    @tasks = Task.all.page(params[:page]) #インスタンス変数 = モデル名.allを代入
   end
   
   def show
@@ -11,7 +11,7 @@ class TasksController < ApplicationController
   end  
   
   def new
-    @task = Task.new()
+    @task = Task.new
   end
   
   def create
