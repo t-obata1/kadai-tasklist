@@ -2,7 +2,7 @@ class TasksController < ApplicationController
   before_action :set_task,  only: [:show,:edit,:update,:destroy]
   
   def index
-    @tasks = Task.all.page(params[:page]) #インスタンス変数 = モデル名.allを代入
+    @tasks = Task.order(id: :desc).all.page(params[:page]).per(20) #インスタンス変数 = モデル名.allを代入
   end
   
   def show
