@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  before_action :require_user_logged_in, only: [:index, :show]
+  
   def new
   end
 
@@ -7,7 +9,7 @@ class SessionsController < ApplicationController
     password = params[:session][:password]
     if login(email,password)
       flash[:success] = "ログインに成功しました。"
-      redirect_to @user
+      redirect_to users_url
     else
       flash.now[:danger] = "ログインに失敗しました。"
       render :new

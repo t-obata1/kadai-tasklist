@@ -1,5 +1,6 @@
 class TasksController < ApplicationController
   before_action :set_task,  only: [:show,:edit,:update,:destroy]
+  before_action :require_user_logged_in, only: [:index, :show]
   
   def index
     @tasks = Task.order(id: :desc).all.page(params[:page]).per(20) #インスタンス変数 = モデル名.allを代入
