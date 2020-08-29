@@ -1,10 +1,15 @@
 class TasksController < ApplicationController
-  before_action :set_task,  only: [:show,:edit,:update,:destroy]
-  before_action :require_user_logged_in, only: [:index, :show]
+  # before_action :set_task,  only: [:show,:edit,:update,:destroy]
+  before_action :correct_user, only: [:destroy]
+  before_action :require_user_logged_in, only: [:index, :show,]
   
   def index
-    @tasks = Task.order(id: :desc).all.page(params[:page]).per(20) #インスタンス変数 = モデル名.allを代入
+    if logged_in?
+      @task = current_user.tasks.build  # form_with 用
+      @tasks = current_user.tasks.order(id: :desc).page(params[:page])
+    end
   end
+    # @tasks = Task.order(id: :desc).all.page(params[:page]).per(20) #インスタンス変数 = モデル名.allを代入
   
   def show
     #set_task
@@ -16,14 +21,14 @@ class TasksController < ApplicationController
   end
   
   def create
-    @task = Task.new(task_params)
-    
+  @task = current_user.tasks.build(task_params)
     if @task.save
-      flash[:success] = "タスクが正常に投稿されました"
-      redirect_to @task
+      flash[:success] = 'タスクを投稿しました。'
+      redirect_to root_url
     else
-      flash.now[:danger] = "タスクが投稿されませんでした"
-      render :new
+      @tasks = current_user.tasks.order(id: :desc).page(params[:page])
+      flash.now[:danger] = 'タスクの投稿に失敗しました。'
+      render 'tasks/index'
     end
   end  
   
@@ -46,18 +51,23 @@ class TasksController < ApplicationController
   end
     
   def destroy
-    #set_task
-    #@task = Task.find(params[:id])
     @task.destroy
-    
-    flash[:success] = "タスクが削除されました"
-    redirect_to tasks_url
+    flash[:success] = 'メッセージを削除しました。'
+    redirect_back(fallback_location: root_path)
+ 
   end
   
 private
 
-  def set_task
-    @task = Task.find(params[:id])
+  # def set_task
+  #   @task = Task.find(params[:id])
+  # end
+  
+  def correct_user
+    @task = current_user.tasks.find_by(id: params[:id])
+    unless @task
+      redirect_to root_url
+    end
   end
 
   def task_params
