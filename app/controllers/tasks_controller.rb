@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
-  # before_action :set_task,  only: [:show,:edit,:update,:destroy]
+  before_action :set_task,  only: [:show,:edit,:update,:destroy]
   before_action :correct_user, only: [:destroy]
-  before_action :require_user_logged_in, only: [:index, :show,]
+  before_action :require_user_logged_in, only: [:index, :show, :destroy]
   
   def index
     if logged_in?
@@ -12,8 +12,8 @@ class TasksController < ApplicationController
     # @tasks = Task.order(id: :desc).all.page(params[:page]).per(20) #インスタンス変数 = モデル名.allを代入
   
   def show
-    #set_task
-    #@task = Task.find(params[:id])
+    # @task = Task.find(params[:id])
+    
   end  
   
   def new
@@ -53,15 +53,15 @@ class TasksController < ApplicationController
   def destroy
     @task.destroy
     flash[:success] = 'メッセージを削除しました。'
-    redirect_back(fallback_location: root_path)
+    redirect_to tasks_url
  
   end
   
 private
 
-  # def set_task
-  #   @task = Task.find(params[:id])
-  # end
+  def set_task
+    @task = Task.find(params[:id])
+  end
   
   def correct_user
     @task = current_user.tasks.find_by(id: params[:id])
