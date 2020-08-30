@@ -14,6 +14,6 @@
     </tr>
   </table>
 
-<%= link_to "一覧に戻る", tasks_path %>
+<%= link_to "一覧に戻る", root_url %>
 <%= link_to "このメッセージを編集する" , edit_task_path(@task) %>
 <%= link_to "このメッセージを削除する" , @task, method: :delete, data:{ confirm: "本当によろしいですか？"} %>

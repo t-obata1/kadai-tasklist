@@ -1,19 +1,22 @@
 class TasksController < ApplicationController
-  before_action :set_task,  only: [:show,:edit,:update,:destroy]
-  before_action :correct_user, only: [:destroy]
+  before_action :correct_user, only:  [:show, :edit, :destroy]
   before_action :require_user_logged_in, only: [:index, :show, :destroy]
+
+
   
+  #以前のbeforeアクション
+  # before_action :set_task,  only: [:show,:edit,:update,:destroy]
+  # before_action :correct_user, only: [:destroy]
+  # before_action :require_user_logged_in, only: [:index, :show, :destroy]
+
   def index
     if logged_in?
-      @task = current_user.tasks.build  # form_with 用
       @tasks = current_user.tasks.order(id: :desc).page(params[:page])
     end
   end
-    # @tasks = Task.order(id: :desc).all.page(params[:page]).per(20) #インスタンス変数 = モデル名.allを代入
-  
+
   def show
-    # @task = Task.find(params[:id])
-    
+
   end  
   
   def new
@@ -28,22 +31,18 @@ class TasksController < ApplicationController
     else
       @tasks = current_user.tasks.order(id: :desc).page(params[:page])
       flash.now[:danger] = 'タスクの投稿に失敗しました。'
-      render 'tasks/index'
+      render 'tasks/new'
     end
   end  
   
   def edit
-    #set_task
-    #@task = Task.find(params[:id])
 
   end
     
   def update
-    #set_task
-    #@task = Task.find(params[:id])
     if @task.update(task_params)
       flash[:success] = "メッセージは正常に更新されました"
-      redirect_to @task
+      redirect_to root_url
     else
       flash.now[:danger] = "タスクが更新されませんでした"
       render :edit
@@ -53,7 +52,7 @@ class TasksController < ApplicationController
   def destroy
     @task.destroy
     flash[:success] = 'メッセージを削除しました。'
-    redirect_to tasks_url
+    redirect_to root_url
  
   end
   
