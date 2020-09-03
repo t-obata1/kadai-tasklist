@@ -1,18 +1,16 @@
 class TasksController < ApplicationController
-  before_action :correct_user, only:  [:show, :edit, :destroy]
-  before_action :require_user_logged_in, only: [:index, :show, :destroy]
-
+  before_action :correct_user, only:  [:show, :edit, :update, :destroy] #ログインユーザが所持しているタスクか確認
+  before_action :require_user_logged_in, only: [:index, :show, :new, :edit, :create, :update, :destroy] #ログインしていれば何もせず、ログインしていなければログインページへ強制的にリダイレクト
 
   
   #以前のbeforeアクション
-  # before_action :set_task,  only: [:show,:edit,:update,:destroy]
-  # before_action :correct_user, only: [:destroy]
+  # before_action :correct_user, only: [:show, :edit, :destroy]
   # before_action :require_user_logged_in, only: [:index, :show, :destroy]
 
   def index
-    if logged_in?
+    # if logged_in?
       @tasks = current_user.tasks.order(id: :desc).page(params[:page])
-    end
+    
   end
 
   def show
@@ -58,10 +56,6 @@ class TasksController < ApplicationController
   
 private
 
-  def set_task
-    @task = Task.find(params[:id])
-  end
-  
   def correct_user
     @task = current_user.tasks.find_by(id: params[:id])
     unless @task
@@ -73,3 +67,11 @@ private
     params.require(:task).permit(:content, :status)
   end
 end
+
+# before_action :correct_user, only: [:destroy] によって、destroy アクションが実行される前に correct_user が実行されます。
+# correct_user メソッドでは、削除しようとしている Micropost が本当にログインユーザが所有しているものかを確認しています。
+# 誰もが勝手に他者の投稿を削除できないようにするための対処です。
+# 具体的には current_user.microposts.find_by(id: params[:id]) によって、ログインユーザ (current_user) が持つ microposts 限定で検索しています。
+# これで見つかれば、ちゃんとログインユーザの Micropost の id であったと確認できますので、そのまま何もしません。
+# 見つからなかった場合、nil が代入されいるので unless @micropost で nil を判定しています。if文は nil か false のとき実行されず、
+# unless文は nil か false のときに実行されます。見つからなければ redirect_to root_url によってトップページに戻されます。
